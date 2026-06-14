@@ -61,14 +61,28 @@ seed().catch(err => {
     if (row) driverId = row.id;
     else driverId = await run('INSERT INTO drivers (name, licence, monthly_salary) VALUES (?, ?, ?)', ['Ramesh', licence, 25000]);
 
+    const licence2 = 'DL-54321';
+    row = await get('SELECT id FROM drivers WHERE licence = ?', [licence2]);
+    let driver2Id;
+    if (row) driver2Id = row.id;
+    else driver2Id = await run('INSERT INTO drivers (name, licence, monthly_salary) VALUES (?, ?, ?)', ['Suresh', licence2, 26000]);
+
     // ensure users
     const adminHash = crypto.createHash('sha256').update('admin123').digest('hex');
     row = await get('SELECT id FROM users WHERE username = ?', ['admin']);
     if (!row) await run('INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)', ['admin', adminHash, 'admin']);
 
+    const superAdminHash = crypto.createHash('sha256').update('superadmin123').digest('hex');
+    row = await get('SELECT id FROM users WHERE username = ?', ['superadmin']);
+    if (!row) await run('INSERT INTO users (username, password_hash, role, admin_level) VALUES (?, ?, ?, ?)', ['superadmin', superAdminHash, 'admin', 'super']);
+
     const driverHash = crypto.createHash('sha256').update('driver123').digest('hex');
     row = await get('SELECT id FROM users WHERE username = ?', ['driver1']);
     if (!row) await run('INSERT INTO users (username, password_hash, role, driver_id) VALUES (?, ?, ?, ?)', ['driver1', driverHash, 'driver', driverId]);
+
+    const driver2Hash = crypto.createHash('sha256').update('driver456').digest('hex');
+    row = await get('SELECT id FROM users WHERE username = ?', ['driver2']);
+    if (!row) await run('INSERT INTO users (username, password_hash, role, driver_id) VALUES (?, ?, ?, ?)', ['driver2', driver2Hash, 'driver', driver2Id]);
 
     // ensure vehicle
     const reg = 'MH12AB1234';
