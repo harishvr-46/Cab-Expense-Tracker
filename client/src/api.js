@@ -1,4 +1,11 @@
-const BASE = import.meta.env.VITE_API_BASE || (import.meta.env.DEV ? 'http://localhost:4000/api' : '/api');
+let BASE = import.meta.env.VITE_API_BASE;
+if (BASE) {
+  // normalize: remove trailing slash then append /api if missing
+  BASE = BASE.replace(/\/+$/, '');
+  if (!BASE.endsWith('/api')) BASE = BASE + '/api';
+} else {
+  BASE = import.meta.env.DEV ? 'http://localhost:4000/api' : '/api';
+}
 
 function buildHeaders(customHeaders = {}) {
   const token = localStorage.getItem('token');
