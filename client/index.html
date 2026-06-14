@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cab Expense Tracker</title>
+  </head>
+  <body>
+    <div id="root">Loading app...</div>
+    <noscript>
+      <div style="padding:20px;background:#fee;border-radius:6px;margin:20px;">JavaScript is required to run this app. Please enable JavaScript.</div>
+    </noscript>
+    <script>
+      // show runtime errors in a top overlay (do not replace #root to avoid interfering with React/HMR)
+      function showOverlay(text){
+        let overlay = document.getElementById('__app_error_overlay');
+        if(!overlay){
+          overlay = document.createElement('div');
+          overlay.id = '__app_error_overlay';
+          overlay.style.position = 'fixed';
+          overlay.style.zIndex = 2147483647;
+          overlay.style.left = '12px';
+          overlay.style.right = '12px';
+          overlay.style.top = '12px';
+          overlay.style.padding = '12px';
+          overlay.style.background = '#fee';
+          overlay.style.color = '#900';
+          overlay.style.border = '1px solid #f99';
+          overlay.style.borderRadius = '8px';
+          overlay.style.whiteSpace = 'pre-wrap';
+          overlay.style.fontFamily = 'monospace';
+          overlay.style.maxHeight = '60vh';
+          overlay.style.overflow = 'auto';
+          document.body.appendChild(overlay);
+        }
+        overlay.textContent = text;
+        console.error(text);
+      }
+
+      window.addEventListener('error', function (e) {
+        const stack = (e && e.error && e.error.stack) || (e && e.message) || 'Unknown error';
+        showOverlay('Runtime error:\n' + stack);
+      });
+
+      window.addEventListener('unhandledrejection', function (e) {
+        const reason = e && (e.reason && (e.reason.stack || e.reason.message) || e.reason) || 'Unknown rejection';
+        showOverlay('Unhandled promise rejection:\n' + reason);
+      });
+    </script>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
