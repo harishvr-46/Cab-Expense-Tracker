@@ -38,6 +38,13 @@ function get(sql, params=[]) {
 
 async function seed() {
   init();
+  const seed = require('./seed');
+
+init();
+
+seed().catch(err => {
+  console.error('Seed failed:', err);
+});
 
   try {
     // ensure owner
