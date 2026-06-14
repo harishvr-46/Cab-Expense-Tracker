@@ -18,7 +18,7 @@ export default function Login() {
     e.preventDefault()
     setError('')
     try {
-      await login(form.username, form.password)
+      await login(form.username.trim(), form.password)
       navigate('/')
     } catch (err) {
       setError(err.error || 'Login failed')
