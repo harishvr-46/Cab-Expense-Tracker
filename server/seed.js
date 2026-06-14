@@ -50,8 +50,12 @@ async function seedData() {
     if (!row) await run('INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)', ['admin', adminHash, 'admin']);
 
     const superAdminHash = crypto.createHash('sha256').update('superadmin123').digest('hex');
-    row = await get('SELECT id FROM users WHERE username = ?', ['superadmin']);
-    if (!row) await run('INSERT INTO users (username, password_hash, role, admin_level) VALUES (?, ?, ?, ?)', ['superadmin', superAdminHash, 'admin', 'super']);
+    row = await get('SELECT id, admin_level FROM users WHERE username = ?', ['superadmin']);
+    if (!row) {
+      await run('INSERT INTO users (username, password_hash, role, admin_level) VALUES (?, ?, ?, ?)', ['superadmin', superAdminHash, 'admin', 'super_admin']);
+    } else if (row.admin_level !== 'super_admin') {
+      await run('UPDATE users SET admin_level = ? WHERE username = ?', ['super_admin', 'superadmin']);
+    }
 
     const driverHash = crypto.createHash('sha256').update('driver123').digest('hex');
     row = await get('SELECT id FROM users WHERE username = ?', ['driver1']);
