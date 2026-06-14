@@ -2,22 +2,6 @@ const { db, init } = require('./db');
 const http = require('http');
 const crypto = require('crypto');
 
-function fetchJson(url) {
-  return new Promise((resolve, reject) => {
-    http.get(url, (res) => {
-      let data = '';
-      res.on('data', (chunk) => (data += chunk));
-      res.on('end', () => {
-        try {
-          resolve(JSON.parse(data));
-        } catch (e) {
-          reject(e);
-        }
-      });
-    }).on('error', reject);
-  });
-}
-
 function run(sql, params = []) {
   return new Promise((resolve, reject) => {
     db.run(sql, params, function (err) {
@@ -95,11 +79,6 @@ async function seedData() {
     await run('INSERT INTO fuel_logs (date, vehicle_id, fuel_type, litres, amount) VALUES (?, ?, ?, ?, ?)', ['2026-06-20', vehicleId, 'CNG', 12, 480]);
 
     console.log('Seed data inserted. Vehicle ID:', vehicleId);
-
-    // Fetch monthly report
-    const month = '2026-06';
-    const data = await fetchJson(`http://localhost:4000/api/reports/monthly?vehicle_id=${vehicleId}&month=${month}`);
-    console.log('Monthly report:', JSON.stringify(data, null, 2));
   } catch (err) {
     console.error('Seeding failed:', err);
   }
