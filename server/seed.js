@@ -18,33 +18,26 @@ function fetchJson(url) {
   });
 }
 
-function run(sql, params=[]) {
+function run(sql, params = []) {
   return new Promise((resolve, reject) => {
-    db.run(sql, params, function(err){
+    db.run(sql, params, function (err) {
       if (err) return reject(err);
       resolve(this.lastID);
     });
   });
 }
 
-function get(sql, params=[]) {
+function get(sql, params = []) {
   return new Promise((resolve, reject) => {
-    db.get(sql, params, (err, row)=> {
+    db.get(sql, params, (err, row) => {
       if (err) return reject(err);
       resolve(row);
     });
   });
 }
 
-async function seed() {
+async function seedData() {
   init();
-  const seed = require('./seed');
-
-init();
-
-seed().catch(err => {
-  console.error('Seed failed:', err);
-});
 
   try {
     // ensure owner
@@ -109,9 +102,17 @@ seed().catch(err => {
     console.log('Monthly report:', JSON.stringify(data, null, 2));
   } catch (err) {
     console.error('Seeding failed:', err);
-  } finally {
-    db.close();
   }
 }
 
-seed();
+if (require.main === module) {
+  seedData()
+    .catch((err) => {
+      console.error('Seeding failed:', err);
+    })
+    .finally(() => {
+      db.close();
+    });
+}
+
+module.exports = seedData;

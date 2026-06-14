@@ -5,6 +5,7 @@ const { db, init } = require('./db');
 const path = require('path');
 const { authMiddleware } = require('./auth');
 
+const seedData = require('./seed');
 const ownersRouter = require('./routes/owners');
 const driversRouter = require('./routes/drivers');
 const vehiclesRouter = require('./routes/vehicles');
@@ -20,6 +21,9 @@ app.use(bodyParser.json());
 app.use(authMiddleware);
 
 init();
+seedData().catch(err => {
+  console.error('Seed failed:', err);
+});
 
 app.use('/api/auth', authRouter);
 app.use('/api/owners', ownersRouter);
