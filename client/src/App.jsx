@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import Nav from './components/Nav'
 import Dashboard from './pages/Dashboard'
@@ -17,6 +17,21 @@ import { RequireAuth, RequireRole } from './ProtectedRoute'
 function AppRoutes() {
   const location = useLocation()
   const hideShell = location.pathname === '/login'
+  const [darkMode, setDarkMode] = useState(false)
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem('theme')
+    const isDark = storedTheme === 'dark'
+    setDarkMode(isDark)
+    document.documentElement.classList.toggle('dark-mode', isDark)
+  }, [])
+
+  function toggleTheme() {
+    const next = !darkMode
+    setDarkMode(next)
+    localStorage.setItem('theme', next ? 'dark' : 'light')
+    document.documentElement.classList.toggle('dark-mode', next)
+  }
 
   if (hideShell) {
     return (
@@ -51,7 +66,11 @@ function AppRoutes() {
             <div className="muted">Monthly income & expense tracking</div>
           </div>
         </div>
-        <div className="muted">Local Dev</div>
+        <div className="page-header-actions">
+          <button className="theme-button" onClick={toggleTheme}>
+            {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+          </button>
+        </div>
       </div>
       <Nav />
       <div className="page-shell">
